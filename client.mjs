@@ -1,0 +1,49 @@
+import { io } from "socket.io-client";
+
+function logWithTime(msg, ...args) {
+    console.log(`${new Date().toTimeString()} | ${msg}`, ...args);
+}
+
+const host = "http://127.0.0.1";
+const port = "8080";
+
+logWithTime(`Attempting to connect to ${host}:${port}`);
+
+const socket = io(`${host}:${port}`, {
+    transports: ["websocket"],
+    upgrade: false,
+    reconnection: false,
+    forceNew: true,
+    autoConnect: false,
+});
+
+socket.on("connect", () => {
+    logWithTime(`Connected`);
+});
+
+socket.on("disconnect", () => {
+    logWithTime(`Disconnected`);
+});
+
+socket.on("connect_error", (err) => {
+    logWithTime(`Connection error:`, err);
+});
+
+socket.on("connect_timeout", (err) => {
+    logWithTime(`Connection timeout:`, err);
+});
+
+socket.on("error", (err) => {
+    logWithTime(`Error:`, err);
+});
+
+socket.on("ping", ({ type, data }) => {
+    logWithTime(`Received ${type}:`, data);
+});
+
+while (true) {
+    // Sleep for 5 seconds
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+    logWithTime(`Send ping...`);
+    socket.emit("ping");
+}
