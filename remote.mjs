@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 import logWithTime from "./common.mjs";
 
 const host = "http://127.0.0.1";
-const port = "8080";
+const port = "8081";
 
 logWithTime(`Attempting to connect to ${host}:${port}`);
 
