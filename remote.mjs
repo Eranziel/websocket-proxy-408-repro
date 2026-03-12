@@ -1,8 +1,5 @@
 import { io } from "socket.io-client";
-
-function logWithTime(msg, ...args) {
-    console.log(`${new Date().toTimeString()} | ${msg}`, ...args);
-}
+import logWithTime from "./common.mjs";
 
 const host = "http://127.0.0.1";
 const port = "8080";

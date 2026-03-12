@@ -2,6 +2,8 @@ import http from "http";
 import express from "express";
 import { Server as SocketServer } from "socket.io";
 
+import logWithTime from "./common.mjs";
+
 const app = express();
 app.set("host", "127.0.0.1");
 app.set("port", 8080);
@@ -17,15 +19,15 @@ const socketServer = new SocketServer(server, {
     // maxHttpBufferSize: 1e8,
 });
 socketServer.on("connection", (socket) => {
-    console.log(`Socket connection initiated`);
+    logWithTime(`Socket connection initiated`);
     socket.on("ping", (data) => {
-        console.log(`Ping received:`, data);
+        logWithTime(`Ping received:`, data);
         socketServer.emit("pong", data);
     });
 });
 
 app.use((req, res, next) => {
-    console.log("Request from", req.ip, "for", req.path, req.method);
+    logWithTime("Request from", req.ip, "for", req.path, req.method);
     next();
 });
 
@@ -33,8 +35,8 @@ app.listen = () => {
     const port = app.get("port");
     const host = app.get("host");
     server.listen(port, host);
-    console.log(`Server is listening on ${host}:${port}`);
-    console.log(`Server timeouts: ${server.headersTimeout / 1000}s  |  ${server.requestTimeout / 1000}s`);
+    logWithTime(`Server is listening on ${host}:${port}`);
+    logWithTime(`Server timeouts: ${server.headersTimeout / 1000}s  |  ${server.requestTimeout / 1000}s`);
     return app;
 };
 export default app.listen();
