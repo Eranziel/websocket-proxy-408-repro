@@ -28,21 +28,25 @@ proxy.on("error", (err, req, res) => {
     }
 });
 
-app.use((req, res, next) => {
-    const catchProxyError = (err) => {
-        if (err) {
-            return next(err);
-        }
-        next();
-    };
-    logWithTime(`${req.ip} ${req.method} ${req.path} - Proxying to host at ${host}`);
-    // Proxy request to host
-    if (req.headers && req.headers.upgrade && req.headers.upgrade.toLowerCase() == "websocket") {
-        logWithTime("Websocket upgrade");
-        proxy.ws(req, req.socket, { target: host }, catchProxyError);
-    } else {
-        proxy.web(req, res, { target: host }, catchProxyError);
-    }
+// app.use((req, res, next) => {
+//     const catchProxyError = (err) => {
+//         if (err) {
+//             return next(err);
+//         }
+//         next();
+//     };
+//     logWithTime(`${req.ip} ${req.method} ${req.path} - Proxying to host at ${host}`);
+//     // Proxy request to host
+//     if (req.headers && req.headers.upgrade && req.headers.upgrade.toLowerCase() == "websocket") {
+//         logWithTime("Websocket upgrade");
+//         proxy.ws(req, req.socket, { target: host }, catchProxyError);
+//     } else {
+//         proxy.web(req, res, { target: host }, catchProxyError);
+//     }
+// });
+
+server.on("upgrade", (req, socket, head) => {
+    proxy.ws(req, socket, { target: host });
 });
 
 app.listen = () => {
